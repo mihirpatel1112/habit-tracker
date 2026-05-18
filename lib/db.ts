@@ -11,6 +11,9 @@ export const sql = postgres(databaseUrl, {
   prepare: false,
 });
 
+/** Habits roll over at local midnight in this zone (not DB/session `current_date`). */
+export const HABIT_CALENDAR_TIME_ZONE = "Australia/Sydney";
+
 export type Habit = {
   id: number;
   title: string;
@@ -93,6 +96,6 @@ export async function getTodayCompletions() {
   return sql<Completion[]>`
     select habit_id, completed_on::text as completed_on
     from habit_completions
-    where completed_on = current_date
+    where completed_on = (current_timestamp at time zone ${HABIT_CALENDAR_TIME_ZONE})::date
   `;
 }

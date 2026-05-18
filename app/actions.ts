@@ -9,7 +9,7 @@ import {
   isAuthenticated,
   validateCredentials,
 } from "@/lib/auth";
-import { ensureArchiveColumn, sql } from "@/lib/db";
+import { ensureArchiveColumn, HABIT_CALENDAR_TIME_ZONE, sql } from "@/lib/db";
 
 async function requireAuth() {
   if (!(await isAuthenticated())) {
@@ -120,7 +120,7 @@ export async function toggleToday(formData: FormData) {
     await sql`
       delete from habit_completions
       where habit_id = ${id}
-        and completed_on = current_date
+        and completed_on = (current_timestamp at time zone ${HABIT_CALENDAR_TIME_ZONE})::date
     `;
 
     revalidateHabitPages();
@@ -129,7 +129,7 @@ export async function toggleToday(formData: FormData) {
 
   await sql`
     insert into habit_completions (habit_id, completed_on)
-    select id, current_date
+    select id, (current_timestamp at time zone ${HABIT_CALENDAR_TIME_ZONE})::date
     from habits
     where id = ${id}
       and archived_at is null
