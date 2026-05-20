@@ -267,8 +267,10 @@ export default async function Home({
                                 aria-label={`${habit.title} on ${day}: ${
                                   completedDays.has(day) ? "done" : "not done"
                                 }`}
-                                className={`h-4 w-4 rounded-md shadow-sm ring-1 ring-white/70 ${
-                                  completedDays.has(day) ? color : "bg-white/70"
+                                className={`box-border h-4 w-4 rounded-md border shadow-sm ${
+                                  completedDays.has(day)
+                                    ? `${color} border-black/15`
+                                    : "border-slate-300 bg-slate-200"
                                 }`}
                                 key={day}
                                 title={`${day}: ${completedDays.has(day) ? "done" : "not done"}`}
