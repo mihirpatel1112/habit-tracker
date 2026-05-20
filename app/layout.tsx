@@ -6,6 +6,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Habits",
   description: "Track habits with clarity and calm.",
+  icons: {
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/apple-icon.svg", type: "image/svg+xml" }],
+  },
 };
 
 export const viewport = {

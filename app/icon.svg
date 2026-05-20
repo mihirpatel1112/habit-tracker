@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Habits">
+  <style>
+    .bg {
+      fill: #e8eef8;
+    }
+    .cell {
+      fill: #aeaeb2;
+    }
+    .done {
+      fill: #34c759;
+    }
+    @media (prefers-color-scheme: dark) {
+      .bg {
+        fill: #1c1c1e;
+      }
+      .cell {
+        fill: #48484a;
+      }
+      .done {
+        fill: #30d158;
+      }
+    }
+  </style>
+  <rect class="bg" width="32" height="32" rx="7.5" />
+  <rect class="cell" x="6" y="6" width="8" height="8" rx="2.25" />
+  <rect class="done" x="18" y="6" width="8" height="8" rx="2.25" />
+  <rect class="cell" x="6" y="18" width="8" height="8" rx="2.25" />
+  <rect class="done" x="18" y="18" width="8" height="8" rx="2.25" />
+</svg>
