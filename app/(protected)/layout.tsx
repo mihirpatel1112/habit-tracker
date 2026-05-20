@@ -15,8 +15,10 @@ export default async function ProtectedLayout({
   return (
     <>
       <AppSidebar />
-      {children}
-      <AppNav />
+      <div className="app-frame">
+        <div className="app-frame-scroll">{children}</div>
+        <AppNav />
+      </div>
     </>
   );
 }

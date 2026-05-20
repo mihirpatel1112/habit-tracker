@@ -3,27 +3,13 @@
 import { CalendarDays, ListChecks } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSyncExternalStore } from "react";
-import { createPortal } from "react-dom";
 
 const tabs = [
   { href: "/", label: "Today", Icon: CalendarDays },
   { href: "/habits", label: "Habits", Icon: ListChecks },
 ] as const;
 
-function subscribe() {
-  return () => {};
-}
-
-function getClientSnapshot() {
-  return true;
-}
-
-function getServerSnapshot() {
-  return false;
-}
-
-function MobileTabBar() {
+export function AppNav() {
   const pathname = usePathname();
 
   return (
@@ -51,14 +37,4 @@ function MobileTabBar() {
       })}
     </nav>
   );
-}
-
-export function AppNav() {
-  const mounted = useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
-
-  if (!mounted) {
-    return null;
-  }
-
-  return createPortal(<MobileTabBar />, document.body);
 }
