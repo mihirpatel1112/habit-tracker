@@ -44,6 +44,7 @@
   --wallpaper-2: #e8d4ff;
   --wallpaper-3: #ffe8d6;
   --wallpaper-base: #e8eef8;
+  --tab-bar-bg: rgba(255, 255, 255, 0.92);
 }
 
 .dark {
@@ -85,6 +86,7 @@
   --wallpaper-2: #2d1f4e;
   --wallpaper-3: #3d2a1a;
   --wallpaper-base: #0a0a0c;
+  --tab-bar-bg: rgba(28, 28, 30, 0.94);
 }
 
 @theme inline {
@@ -106,6 +108,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: var(--wallpaper-base);
+  overflow-x: clip;
 }
 
 button,
@@ -678,18 +681,24 @@ input {
   }
 
   .mobile-tab-bar {
-    backdrop-filter: var(--glass-blur);
-    -webkit-backdrop-filter: var(--glass-blur);
-    background: color-mix(in srgb, var(--glass-bg-elevated) 94%, transparent);
+    background: var(--tab-bar-bg);
     border-top: 1px solid var(--glass-border-subtle);
     bottom: 0;
+    box-sizing: border-box;
     display: grid;
     grid-template-columns: 1fr 1fr;
+    inset-inline: 0;
+    isolation: isolate;
     left: 0;
+    margin: 0;
+    max-width: 100vw;
     padding-bottom: env(safe-area-inset-bottom);
     position: fixed;
     right: 0;
-    z-index: 50;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    width: 100%;
+    z-index: 100;
   }
 
   .mobile-tab-item {
@@ -699,9 +708,10 @@ input {
     flex-direction: column;
     gap: 0.15rem;
     justify-content: center;
-    min-height: calc(var(--mobile-tab-bar-height) + env(safe-area-inset-bottom) * 0);
-    padding: 0.5rem 0.25rem 0.35rem;
+    min-height: var(--mobile-tab-bar-height);
+    padding: 0.5rem 0.25rem;
     text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
     transition: color 0.2s ease;
   }
 
@@ -940,5 +950,5 @@ input {
 }
 
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
