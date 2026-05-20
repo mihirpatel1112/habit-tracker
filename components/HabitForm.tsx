@@ -4,26 +4,25 @@ interface HabitFormProps {
 
 export function HabitForm({ action }: HabitFormProps) {
   return (
-    <form action={action} className="flex flex-col gap-3 sm:flex-row">
-      <div className="flex-1">
-        <label className="sr-only" htmlFor="title">
-          Habit title
+    <form action={action} className="list-row flex-col gap-3 sm:flex-row sm:items-end">
+      <div className="w-full flex-1">
+        <label className="tahoe-caption mb-1.5 block font-semibold text-[var(--label-primary)]" htmlFor="title">
+          New habit
         </label>
         <input
-          className="w-full rounded-2xl border border-white/70 bg-white/70 px-4 py-3 text-sm font-medium text-slate-950 shadow-inner shadow-slate-900/5 outline-none backdrop-blur placeholder:text-slate-400 focus:border-sky-300 focus:ring-4 focus:ring-sky-100"
+          autoComplete="off"
+          className="field-glass"
           id="title"
+          maxLength={80}
           name="title"
-          placeholder="Create a habit"
+          placeholder="e.g. Morning run"
           type="text"
           required
         />
       </div>
 
-      <button
-        className="rounded-2xl bg-linear-to-br from-sky-500 to-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-500/25 transition hover:-translate-y-0.5"
-        type="submit"
-      >
-        Add
+      <button className="btn-glass-prominent w-full shrink-0 sm:w-auto" type="submit">
+        Add Habit
       </button>
     </form>
   );

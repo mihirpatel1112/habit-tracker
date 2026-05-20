@@ -1,12 +1,20 @@
-import Link from "next/link";
-import { logout, toggleToday } from "@/app/actions";
+import { AppHeader } from "@/components/AppHeader";
+import { CompleteButton } from "@/components/CompleteButton";
+import { EmptyState } from "@/components/EmptyState";
+import { GraphLegend } from "@/components/GraphLegend";
 import { GraphScroller } from "@/components/GraphScroller";
+import { GroupedSection } from "@/components/GroupedSection";
+import { SegmentedLink } from "@/components/SegmentedLink";
+import { SegmentedScroll } from "@/components/SegmentedScroll";
+import { TodaySummary } from "@/components/TodaySummary";
 import {
   getCompletionYears,
   getCompletionsForYear,
   getHabits,
   getTodayCompletions,
 } from "@/lib/db";
+import { formatPercent } from "@/lib/format";
+import { getHabitColor } from "@/lib/habit-colors";
 
 function toDateKey(date: Date) {
   const year = date.getFullYear();
@@ -33,10 +41,7 @@ function getYearMonths(year: number) {
     const isCurrentMonth = year === today.getFullYear() && monthIndex === today.getMonth();
     const lastDay = new Date(year, monthIndex + 1, 0);
     const endDay = isCurrentMonth ? today.getDate() : lastDay.getDate();
-    const days: Array<string | null> = Array.from(
-      { length: firstDay.getDay() },
-      () => null,
-    );
+    const days: Array<string | null> = Array.from({ length: firstDay.getDay() }, () => null);
 
     for (let day = 1; day <= endDay; day += 1) {
       days.push(toDateKey(new Date(year, monthIndex, day)));
@@ -52,19 +57,11 @@ function getYearMonths(year: number) {
   return months;
 }
 
-const habitColors = [
-  "bg-emerald-500",
-  "bg-sky-500",
-  "bg-violet-500",
-  "bg-amber-500",
-  "bg-rose-500",
-  "bg-cyan-500",
-  "bg-lime-500",
-  "bg-fuchsia-500",
-];
-
-function getHabitColor(habitId: number) {
-  return habitColors[Math.abs(habitId) % habitColors.length];
+function countTrackableDays(months: ReturnType<typeof getYearMonths>) {
+  return months.reduce(
+    (total, month) => total + month.days.filter((day) => day !== null).length,
+    0,
+  );
 }
 
 function getSelectedYear(value: string | undefined) {
@@ -95,204 +92,164 @@ export default async function Home({
       getTodayCompletions(),
     ]);
   const months = getYearMonths(selectedYear);
+  const trackableDays = countTrackableDays(months);
   const todayCompleted = new Set(todayCompletions.map((completion) => completion.habit_id));
-  const yearOptions = Array.from(
-    new Set([new Date().getFullYear(), ...completionYears]),
-  ).sort((first, second) => second - first);
+  const yearOptions = Array.from(new Set([new Date().getFullYear(), ...completionYears])).sort(
+    (first, second) => second - first,
+  );
+  const graphQuery = graphView === "archived" ? "&view=archived" : "";
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
-      <header className="rounded-4xl border border-white/70 bg-white/55 p-5 shadow-2xl shadow-sky-900/10 backdrop-blur-xl sm:p-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="text-sm font-medium text-sky-700">Habit dashboard</p>
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-5xl">
-            Keep the streak alive.
-          </h1>
-          <p className="mt-3 max-w-xl text-sm leading-6 text-slate-600 sm:text-base">
-            Track today fast, then check your progress one year at a time.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Link
-            className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5"
-            href="/habits"
-          >
-            Create habits
-          </Link>
-          <form action={logout}>
-            <button
-              className="rounded-2xl border border-white/70 bg-white/60 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur transition hover:bg-white"
-              type="submit"
-            >
-              Log out
-            </button>
-          </form>
-        </div>
-        </div>
-      </header>
+    <main className="app-shell page-enter">
+      <AppHeader
+        primaryAction={{ href: "/habits", label: "Manage" }}
+        subtitle="Mark today in one tap. Review your year when you are ready."
+        title="Today"
+      />
 
-      <section className="mt-6 rounded-4xl border border-white/70 bg-white/55 p-4 shadow-xl shadow-sky-900/10 backdrop-blur-xl sm:p-5">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold text-slate-950">Today</h2>
-          <p className="rounded-full bg-emerald-100/80 px-3 py-1 text-sm font-medium text-emerald-700">
-            {todayCompleted.size}/{activeHabits.length} complete
-          </p>
-        </div>
+      <GroupedSection
+        badge={`${todayCompleted.size}/${activeHabits.length}`}
+        title="Today"
+      >
+        <TodaySummary completed={todayCompleted.size} total={activeHabits.length} />
 
-        <div className="mt-4 space-y-3">
-          {activeHabits.length === 0 ? (
-            <p className="rounded-3xl bg-white/60 p-4 text-sm text-slate-600">
-              No active habits. Create one on the habits page.
-            </p>
-          ) : (
-            activeHabits.map((habit) => {
-              const isDone = todayCompleted.has(habit.id);
+        {activeHabits.length === 0 ? (
+          <EmptyState
+            action={{ href: "/habits", label: "Create your first habit" }}
+            description="Start with one small habit you can finish today."
+            title="Nothing to track yet"
+          />
+        ) : (
+          activeHabits.map((habit) => {
+            const isDone = todayCompleted.has(habit.id);
+            const color = getHabitColor(habit.id);
 
-              return (
-                <div
-                  className="flex items-center justify-between gap-3 rounded-3xl border border-white/70 bg-white/65 p-3 shadow-sm backdrop-blur"
-                  key={habit.id}
-                >
+            return (
+              <div className="list-row list-row-interactive" key={habit.id}>
+                <div className="flex min-w-0 items-center gap-3">
+                  <span aria-hidden className={`h-2.5 w-2.5 shrink-0 rounded-full ${color}`} />
                   <div className="min-w-0">
-                    <p className="truncate font-semibold text-slate-950">{habit.title}</p>
-                    <p className="text-xs text-slate-500">
-                      {isDone ? "Completed today" : "Not completed today"}
+                    <p className="truncate font-medium text-[var(--label-primary)]">{habit.title}</p>
+                    <p className="tahoe-footnote">
+                      {isDone ? "Completed today" : "Not completed yet"}
                     </p>
                   </div>
-
-                  <form action={toggleToday}>
-                    <input name="id" type="hidden" value={habit.id} />
-                    <input name="isDone" type="hidden" value={String(isDone)} />
-                    <button
-                      aria-label={isDone ? `Undo ${habit.title}` : `Complete ${habit.title}`}
-                      className={`grid h-12 w-12 place-items-center rounded-2xl text-2xl font-black text-white shadow-lg transition hover:-translate-y-0.5 ${
-                        isDone
-                          ? "bg-linear-to-br from-rose-400 to-red-600 shadow-red-500/25"
-                          : "bg-linear-to-br from-emerald-300 to-green-600 shadow-emerald-500/25"
-                      }`}
-                      type="submit"
-                    >
-                      {isDone ? "×" : "✓"}
-                    </button>
-                  </form>
                 </div>
-              );
-            })
-          )}
-        </div>
-      </section>
 
-      <section className="mt-6 rounded-4xl border border-white/70 bg-white/55 p-4 shadow-xl shadow-sky-900/10 backdrop-blur-xl sm:p-5">
-        <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold text-slate-950">Habit graphs</h2>
-          <p className="rounded-full bg-sky-100/80 px-3 py-1 text-sm font-medium text-sky-700">
-            {selectedYear}
-          </p>
-        </div>
+                <CompleteButton
+                  colorClass={color}
+                  habitId={habit.id}
+                  habitTitle={habit.title}
+                  isDone={isDone}
+                />
+              </div>
+            );
+          })
+        )}
+      </GroupedSection>
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          <Link
-            className={`rounded-2xl px-4 py-2 text-sm font-semibold transition ${
-              graphView === "active"
-                ? "bg-slate-950 text-white shadow-lg shadow-slate-900/15"
-                : "border border-white/70 bg-white/55 text-slate-600"
-            }`}
-            href={`/?year=${selectedYear}`}
-          >
-            Active
-          </Link>
-          <Link
-            className={`rounded-2xl px-4 py-2 text-sm font-semibold transition ${
+      <GroupedSection
+        badge={String(selectedYear)}
+        hint="Each square is one day · tap and hold for the date"
+        title="Progress"
+        controls={
+          <div className="space-y-2.5">
+            <GraphLegend />
+            <SegmentedScroll label="Habit view">
+              <SegmentedLink
+                active={graphView === "active"}
+                href={`/?year=${selectedYear}`}
+                label="Active"
+              />
+              <SegmentedLink
+                active={graphView === "archived"}
+                href={`/?year=${selectedYear}&view=archived`}
+                label="Archived"
+              />
+            </SegmentedScroll>
+            <SegmentedScroll label="Year">
+              {yearOptions.map((year) => (
+                <SegmentedLink
+                  active={year === selectedYear}
+                  href={`/?year=${year}${graphQuery}`}
+                  key={year}
+                  label={String(year)}
+                />
+              ))}
+            </SegmentedScroll>
+          </div>
+        }
+      >
+        {graphHabits.length === 0 ? (
+          <EmptyState
+            description={
               graphView === "archived"
-                ? "bg-slate-950 text-white shadow-lg shadow-slate-900/15"
-                : "border border-white/70 bg-white/55 text-slate-600"
-            }`}
-            href={`/?year=${selectedYear}&view=archived`}
-          >
-            Archived
-          </Link>
-          {yearOptions.map((year) => (
-            <Link
-              className={`rounded-2xl px-4 py-2 text-sm font-semibold transition ${
-                year === selectedYear
-                  ? "bg-white text-slate-950 shadow-sm"
-                  : "border border-white/70 bg-white/45 text-slate-600"
-              }`}
-              href={`/?year=${year}${graphView === "archived" ? "&view=archived" : ""}`}
-              key={year}
-            >
-              {year}
-            </Link>
-          ))}
-        </div>
+                ? "Archived habits will show up here with their history."
+                : "Create a habit on the Habits page to see your calendar."
+            }
+            title={graphView === "archived" ? "No archived habits" : "No habits to graph"}
+          />
+        ) : (
+          graphHabits.map((habit) => {
+            const completedDays = new Set(
+              completions
+                .filter((completion) => completion.habit_id === habit.id)
+                .map((completion) => completion.completed_on),
+            );
+            const color = getHabitColor(habit.id);
+            const rate = formatPercent(completedDays.size, trackableDays);
 
-        <div className="mt-5 space-y-6">
-          {graphHabits.length === 0 ? (
-            <p className="rounded-3xl bg-white/60 p-4 text-sm text-slate-600">
-              No {graphView} habits to show.
-            </p>
-          ) : (
-            graphHabits.map((habit) => {
-              const completedDays = new Set(
-                completions
-                  .filter((completion) => completion.habit_id === habit.id)
-                  .map((completion) => completion.completed_on),
-              );
-              const color = getHabitColor(habit.id);
-
-              return (
-                <article
-                  className="rounded-[1.75rem] border border-white/70 bg-white/65 p-4 shadow-lg shadow-sky-900/5 backdrop-blur"
-                  key={habit.id}
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="truncate font-semibold text-slate-950">{habit.title}</h3>
-                      <p className="text-sm text-slate-500">
-                        {completedDays.size} days completed in {selectedYear}
-                      </p>
-                    </div>
-                    <span className={`h-4 w-4 rounded ${color} shadow-sm`} />
+            return (
+              <article className="graph-article border-t border-[var(--glass-border-subtle)] p-4 first:border-t-0" key={habit.id}>
+                <div className="graph-habit-header">
+                  <div className="min-w-0">
+                    <h3 className="truncate font-medium text-[var(--label-primary)]">{habit.title}</h3>
+                    <p className="tahoe-footnote">
+                      {completedDays.size} of {trackableDays} days · {rate}% in {selectedYear}
+                    </p>
                   </div>
+                  <div className="graph-habit-stats flex shrink-0 items-center gap-2">
+                    <span className="habit-stat-pill">{rate}%</span>
+                    <span aria-hidden className={`h-3 w-3 rounded-full ${color}`} />
+                  </div>
+                </div>
 
-                  <GraphScroller>
-                    {months.map((month) => (
-                      <div className="shrink-0" key={month.key}>
-                        <p className="text-xs font-semibold text-slate-500">{month.label}</p>
-                        <div className="mt-2 grid grid-flow-col grid-rows-7 gap-1.5">
-                          {month.days.map((day, index) =>
-                            day ? (
-                              <div
-                                aria-label={`${habit.title} on ${day}: ${
-                                  completedDays.has(day) ? "done" : "not done"
-                                }`}
-                                className={`box-border h-4 w-4 rounded-md border shadow-sm ${
-                                  completedDays.has(day)
-                                    ? `${color} border-black/15`
-                                    : "border-slate-300 bg-slate-200"
-                                }`}
-                                key={day}
-                                title={`${day}: ${completedDays.has(day) ? "done" : "not done"}`}
-                              />
-                            ) : (
-                              <div
-                                aria-hidden="true"
-                                className="h-4 w-4"
-                                key={`${month.key}-blank-${index}`}
-                              />
-                            ),
-                          )}
-                        </div>
+                <GraphScroller>
+                  {months.map((month) => (
+                    <div className="shrink-0" key={month.key}>
+                      <p className="tahoe-caption font-semibold">{month.label}</p>
+                      <div className="mt-2 grid grid-flow-col grid-rows-7 gap-1.5">
+                        {month.days.map((day, index) =>
+                          day ? (
+                            <div
+                              aria-label={`${habit.title} on ${day}: ${
+                                completedDays.has(day) ? "done" : "not done"
+                              }`}
+                              className={`graph-cell graph-cell-size border ${
+                                completedDays.has(day)
+                                  ? `${color} border-[var(--graph-cell-border-done)]`
+                                  : "border-[var(--graph-empty-border)] bg-[var(--graph-empty)]"
+                              }`}
+                              key={day}
+                              title={`${day}: ${completedDays.has(day) ? "Done" : "Missed"}`}
+                            />
+                          ) : (
+                            <div
+                              aria-hidden="true"
+                              className="graph-cell-blank"
+                              key={`${month.key}-blank-${index}`}
+                            />
+                          ),
+                        )}
                       </div>
-                    ))}
-                  </GraphScroller>
-                </article>
-              );
-            })
-          )}
-        </div>
-      </section>
+                    </div>
+                  ))}
+                </GraphScroller>
+              </article>
+            );
+          })
+        )}
+      </GroupedSection>
     </main>
   );
 }

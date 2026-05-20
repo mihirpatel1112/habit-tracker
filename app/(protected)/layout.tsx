@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { AppNav } from "@/components/AppNav";
+import { AppSidebar } from "@/components/AppSidebar";
 import { isAuthenticated } from "@/lib/auth";
 
 export default async function ProtectedLayout({
@@ -10,5 +12,11 @@ export default async function ProtectedLayout({
     redirect("/login");
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <AppSidebar />
+      {children}
+      <AppNav />
+    </>
+  );
 }

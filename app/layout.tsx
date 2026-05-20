@@ -1,9 +1,32 @@
 import type { Metadata } from "next";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { TahoeWallpaper } from "@/components/TahoeShell";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Habit Tracker",
+  title: "Habits",
+  description: "Track habits with clarity and calm.",
 };
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
+const themeScript = `
+(function () {
+  try {
+    var stored = localStorage.getItem("habit-theme");
+    var dark =
+      stored === "dark" ||
+      (stored !== "light" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.classList.toggle("dark", dark);
+    document.documentElement.style.colorScheme = dark ? "dark" : "light";
+  } catch (e) {}
+})();
+`;
 
 export default function RootLayout({
   children,
@@ -11,8 +34,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
+      <body>
+        <TahoeWallpaper />
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }
