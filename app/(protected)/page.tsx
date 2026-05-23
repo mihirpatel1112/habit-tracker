@@ -1,16 +1,20 @@
 import { AppHeader } from "@/components/AppHeader";
+import { DateNavigator } from "@/components/DateNavigator";
 import { EmptyState } from "@/components/EmptyState";
+import { GraphDayButton } from "@/components/CompleteButton";
 import { GraphLegend } from "@/components/GraphLegend";
 import { GraphScroller } from "@/components/GraphScroller";
 import { GroupedSection } from "@/components/GroupedSection";
 import { SegmentedLink } from "@/components/SegmentedLink";
 import { SegmentedScroll } from "@/components/SegmentedScroll";
 import { TodaySummary } from "@/components/TodaySummary";
+import { getSelectedDate } from "@/lib/dates";
 import {
+  getCalendarToday,
   getCompletionYears,
+  getCompletionsForDate,
   getCompletionsForYear,
   getHabits,
-  getTodayCompletions,
 } from "@/lib/db";
 import { formatPercent } from "@/lib/format";
 import { getHabitColor } from "@/lib/habit-colors";
@@ -78,22 +82,25 @@ function getSelectedYear(value: string | undefined) {
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ view?: string; year?: string }>;
+  searchParams: Promise<{ date?: string; view?: string; year?: string }>;
 }) {
   const params = await searchParams;
+  const calendarToday = await getCalendarToday();
+  const selectedDate = getSelectedDate(params.date, calendarToday);
   const selectedYear = getSelectedYear(params.year);
   const graphView = params.view === "archived" ? "archived" : "active";
-  const [activeHabits, graphHabits, completions, completionYears, todayCompletions] =
+  const dateQuery = selectedDate === calendarToday ? "" : `&date=${selectedDate}`;
+  const [activeHabits, graphHabits, completions, completionYears, dateCompletions] =
     await Promise.all([
       getHabits("active"),
       getHabits(graphView),
       getCompletionsForYear(selectedYear),
       getCompletionYears(),
-      getTodayCompletions(),
+      getCompletionsForDate(selectedDate),
     ]);
   const months = getYearMonths(selectedYear);
   const trackableDays = countTrackableDays(months);
-  const todayCompleted = new Set(todayCompletions.map((completion) => completion.habit_id));
+  const dateCompleted = new Set(dateCompletions.map((completion) => completion.habit_id));
   const yearOptions = Array.from(new Set([new Date().getFullYear(), ...completionYears])).sort(
     (first, second) => second - first,
   );
@@ -108,7 +115,8 @@ export default async function Home({
       />
 
       <GroupedSection hideHeaderOnMobile title="Today">
-        <TodaySummary completed={todayCompleted.size} total={activeHabits.length} />
+        <DateNavigator calendarToday={calendarToday} selectedDate={selectedDate} />
+        <TodaySummary completed={dateCompleted.size} total={activeHabits.length} />
 
         {activeHabits.length === 0 ? (
           <EmptyState
@@ -117,13 +125,17 @@ export default async function Home({
             title="Nothing to track yet"
           />
         ) : (
-          <TodayClient activeHabits={activeHabits} todayCompletions={todayCompletions} />
+          <TodayClient
+            activeHabits={activeHabits}
+            selectedDate={selectedDate}
+            todayCompletions={dateCompletions}
+          />
         )}
        </GroupedSection>
 
       <GroupedSection
         badge={String(selectedYear)}
-        hint="Each square is one day · tap and hold for the date"
+        hint="Each square is one day · tap a square to mark or unmark"
         title="Progress"
         controls={
           <div className="flex flex-col gap-2 md:gap-2.5">
@@ -134,12 +146,12 @@ export default async function Home({
               <SegmentedScroll label="Habit view">
                 <SegmentedLink
                   active={graphView === "active"}
-                  href={`/?year=${selectedYear}`}
+                  href={`/?year=${selectedYear}${dateQuery}`}
                   label="Active"
                 />
                 <SegmentedLink
                   active={graphView === "archived"}
-                  href={`/?year=${selectedYear}&view=archived`}
+                  href={`/?year=${selectedYear}&view=archived${dateQuery}`}
                   label="Archived"
                 />
               </SegmentedScroll>
@@ -147,7 +159,7 @@ export default async function Home({
                 {yearOptions.map((year) => (
                   <SegmentedLink
                     active={year === selectedYear}
-                    href={`/?year=${year}${graphQuery}`}
+                    href={`/?year=${year}${graphQuery}${dateQuery}`}
                     key={year}
                     label={String(year)}
                   />
@@ -197,17 +209,13 @@ export default async function Home({
                       <div className="gap-1.5 grid grid-rows-7 grid-flow-col mt-2">
                         {month.days.map((day, index) =>
                           day ? (
-                            <div
-                              aria-label={`${habit.title} on ${day}: ${
-                                completedDays.has(day) ? "done" : "not done"
-                              }`}
-                              className={`graph-cell graph-cell-size border ${
-                                completedDays.has(day)
-                                  ? `${color} border-[var(--graph-cell-border-done)]`
-                                  : "border-[var(--graph-empty-border)] bg-[var(--graph-empty)]"
-                              }`}
+                            <GraphDayButton
+                              colorClass={color}
+                              completedOn={day}
+                              habitId={habit.id}
+                              habitTitle={habit.title}
+                              isDone={completedDays.has(day)}
                               key={day}
-                              title={`${day}: ${completedDays.has(day) ? "Done" : "Missed"}`}
                             />
                           ) : (
                             <div

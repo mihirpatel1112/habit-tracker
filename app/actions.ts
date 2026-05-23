@@ -9,7 +9,8 @@ import {
   isAuthenticated,
   validateCredentials,
 } from "@/lib/auth";
-import { ensureArchiveColumn, HABIT_CALENDAR_TIME_ZONE, sql } from "@/lib/db";
+import { isDateKey } from "@/lib/dates";
+import { ensureArchiveColumn, getCalendarToday, sql } from "@/lib/db";
 
 async function requireAuth() {
   if (!(await isAuthenticated())) {
@@ -111,8 +112,11 @@ export async function toggleToday(formData: FormData) {
 
   const id = Number(formData.get("id"));
   const isDone = formData.get("isDone") === "true";
+  const calendarToday = await getCalendarToday();
+  const rawDate = String(formData.get("completedOn") ?? "").trim();
+  const completedOn = rawDate || calendarToday;
 
-  if (!Number.isInteger(id)) {
+  if (!Number.isInteger(id) || !isDateKey(completedOn) || completedOn > calendarToday) {
     return;
   }
 
@@ -120,7 +124,7 @@ export async function toggleToday(formData: FormData) {
     await sql`
       delete from habit_completions
       where habit_id = ${id}
-        and completed_on = (current_timestamp at time zone ${HABIT_CALENDAR_TIME_ZONE})::date
+        and completed_on = ${completedOn}::date
     `;
 
     revalidateHabitPages();
@@ -129,7 +133,7 @@ export async function toggleToday(formData: FormData) {
 
   await sql`
     insert into habit_completions (habit_id, completed_on)
-    select id, (current_timestamp at time zone ${HABIT_CALENDAR_TIME_ZONE})::date
+    select id, ${completedOn}::date
     from habits
     where id = ${id}
       and archived_at is null

@@ -12,6 +12,7 @@ interface TodayClientProps {
   todayCompletions: Array<{
     habit_id: number;
   }>;
+  selectedDate: string;
 }
 
 function sortHabitOrder(order: number[], completed: Set<number>) {
@@ -20,7 +21,7 @@ function sortHabitOrder(order: number[], completed: Set<number>) {
   return [...incomplete, ...complete];
 }
 
-export function TodayClient({ activeHabits, todayCompletions }: TodayClientProps) {
+export function TodayClient({ activeHabits, todayCompletions, selectedDate }: TodayClientProps) {
   const initialCompleted = new Set(todayCompletions.map((completion) => completion.habit_id));
   const initialOrder = activeHabits.map((habit) => habit.id);
 
@@ -67,6 +68,7 @@ export function TodayClient({ activeHabits, todayCompletions }: TodayClientProps
 
             <CompleteButton
               colorClass={color}
+              completedOn={selectedDate}
               habitId={habit.id}
               habitTitle={habit.title}
               isDone={isDone}

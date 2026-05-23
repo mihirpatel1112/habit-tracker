@@ -350,6 +350,167 @@ input {
     font-weight: 600;
   }
 
+  .date-nav {
+    border-bottom: 1px solid var(--border-default);
+    padding: 0.875rem 1rem 1rem;
+  }
+
+  .date-nav-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .date-nav-toolbar {
+    align-items: center;
+    display: grid;
+    gap: 0.625rem;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .date-nav-display {
+    min-width: 0;
+    text-align: center;
+  }
+
+  .date-nav-primary {
+    color: var(--text-primary);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .date-nav-secondary {
+    color: var(--text-secondary);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    line-height: 1.35;
+    margin-top: 0.125rem;
+  }
+
+  .date-nav-hint {
+    color: var(--accent);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+  }
+
+  .date-nav-btn {
+    align-items: center;
+    background: var(--surface-muted);
+    border: 1px solid var(--border-default);
+    border-radius: 50%;
+    color: var(--text-primary);
+    display: inline-flex;
+    flex-shrink: 0;
+    height: 2.75rem;
+    justify-content: center;
+    transition:
+      background 0.2s ease-out,
+      border-color 0.2s ease-out,
+      color 0.2s ease-out,
+      transform 0.15s ease-out;
+    width: 2.75rem;
+  }
+
+  .date-nav-btn:hover {
+    background: var(--list-hover);
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--border-default));
+    color: var(--accent);
+  }
+
+  .date-nav-btn:active {
+    transform: scale(0.94);
+  }
+
+  .date-nav-btn-disabled {
+    background: var(--surface-muted);
+    border-color: var(--border-default);
+    color: var(--text-tertiary);
+    cursor: not-allowed;
+    opacity: 0.55;
+    pointer-events: none;
+    transform: none;
+  }
+
+  .date-nav-today-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 0.75rem;
+  }
+
+  .date-nav-today {
+    background: var(--accent-surface);
+    border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    border-radius: var(--radius-capsule);
+    color: var(--accent);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    min-height: 2.5rem;
+    padding: 0.5rem 1.125rem;
+    transition:
+      background 0.2s ease-out,
+      border-color 0.2s ease-out,
+      transform 0.15s ease-out;
+    width: 100%;
+  }
+
+  .date-nav-today:hover {
+    background: color-mix(in srgb, var(--accent) 16%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+
+  .date-nav-today:active {
+    transform: scale(0.98);
+  }
+
+  @media (min-width: 640px) {
+    .date-nav {
+      padding: 1rem 1.125rem 1.125rem;
+    }
+
+    .date-nav-shell {
+      align-items: center;
+      flex-direction: row;
+      gap: 0.875rem;
+    }
+
+    .date-nav-toolbar {
+      flex: 1;
+      gap: 0.75rem;
+      grid-template-columns: auto minmax(0, 1fr) auto;
+      min-width: 0;
+    }
+
+    .date-nav-display {
+      text-align: left;
+    }
+
+    .date-nav-primary {
+      font-size: 1.125rem;
+    }
+
+    .date-nav-secondary {
+      font-size: 0.875rem;
+    }
+
+    .date-nav-today-row {
+      flex-shrink: 0;
+      margin-top: 0;
+    }
+
+    .date-nav-today {
+      min-height: 2.75rem;
+      padding: 0.5rem 1rem;
+      width: auto;
+      white-space: nowrap;
+    }
+  }
+
   .list-row {
     align-items: center;
     display: flex;
@@ -959,6 +1120,15 @@ input {
     font-size: 1rem;
     height: 2.5rem;
     width: 2.5rem;
+  }
+
+  .date-nav {
+    padding: 0.75rem 0.875rem 0.875rem;
+  }
+
+  .date-nav-btn {
+    height: 2.875rem;
+    width: 2.875rem;
   }
 
   .today-summary {

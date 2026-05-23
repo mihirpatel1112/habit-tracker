@@ -49,14 +49,83 @@ interface CompleteButtonProps {
   isDone: boolean;
   habitTitle: string;
   colorClass: string;
+  completedOn: string;
 }
 
-export function CompleteButton({ habitId, isDone, habitTitle, colorClass }: CompleteButtonProps) {
+export function CompleteButton({
+  habitId,
+  isDone,
+  habitTitle,
+  colorClass,
+  completedOn,
+}: CompleteButtonProps) {
   return (
     <form action={toggleToday} className="shrink-0">
       <input name="id" type="hidden" value={habitId} />
       <input name="isDone" type="hidden" value={String(isDone)} />
+      <input name="completedOn" type="hidden" value={completedOn} />
       <CompleteButtonControl colorClass={colorClass} habitTitle={habitTitle} isDone={isDone} />
+    </form>
+  );
+}
+
+function GraphDayButtonControl({
+  isDone,
+  habitTitle,
+  colorClass,
+  completedOn,
+}: {
+  isDone: boolean;
+  habitTitle: string;
+  colorClass: string;
+  completedOn: string;
+}) {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      aria-busy={pending}
+      aria-label={`${habitTitle} on ${completedOn}: ${
+        isDone ? "done, tap to undo" : "not done, tap to mark"
+      }`}
+      className={`graph-cell graph-cell-size border cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 ${
+        isDone
+          ? `${colorClass} border-[var(--graph-cell-border-done)]`
+          : "border-[var(--graph-empty-border)] bg-[var(--graph-empty)]"
+      }`}
+      disabled={pending}
+      title={`${completedOn}: ${isDone ? "Done" : "Missed"}`}
+      type="submit"
+    />
+  );
+}
+
+interface GraphDayButtonProps {
+  habitId: number;
+  isDone: boolean;
+  habitTitle: string;
+  colorClass: string;
+  completedOn: string;
+}
+
+export function GraphDayButton({
+  habitId,
+  isDone,
+  habitTitle,
+  colorClass,
+  completedOn,
+}: GraphDayButtonProps) {
+  return (
+    <form action={toggleToday} className="contents">
+      <input name="id" type="hidden" value={habitId} />
+      <input name="isDone" type="hidden" value={String(isDone)} />
+      <input name="completedOn" type="hidden" value={completedOn} />
+      <GraphDayButtonControl
+        colorClass={colorClass}
+        completedOn={completedOn}
+        habitTitle={habitTitle}
+        isDone={isDone}
+      />
     </form>
   );
 }

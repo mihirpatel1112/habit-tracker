@@ -92,10 +92,23 @@ export async function getCompletionYears() {
   return years.map((row) => row.year);
 }
 
+export async function getCalendarToday() {
+  const [row] = await sql<{ today: string }[]>`
+    select (current_timestamp at time zone ${HABIT_CALENDAR_TIME_ZONE})::date::text as today
+  `;
+
+  return row.today;
+}
+
 export async function getTodayCompletions() {
+  const today = await getCalendarToday();
+  return getCompletionsForDate(today);
+}
+
+export async function getCompletionsForDate(date: string) {
   return sql<Completion[]>`
     select habit_id, completed_on::text as completed_on
     from habit_completions
-    where completed_on = (current_timestamp at time zone ${HABIT_CALENDAR_TIME_ZONE})::date
+    where completed_on = ${date}::date
   `;
 }
