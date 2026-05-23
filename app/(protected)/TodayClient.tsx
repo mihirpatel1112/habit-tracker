@@ -30,7 +30,7 @@ export function TodayClient({ activeHabits, todayCompletions }: TodayClientProps
   const [completedHabits, setCompletedHabits] = useState(initialCompleted);
   
   // Use ref to track previous completions
-  const prevCompletionsRef = useRef(new Set());
+  const prevCompletionsRef = useRef(initialCompleted);
 
   // Update state when today's completions change
   useEffect(() => {
@@ -70,16 +70,6 @@ export function TodayClient({ activeHabits, todayCompletions }: TodayClientProps
               habitId={habit.id}
               habitTitle={habit.title}
               isDone={isDone}
-              onToggle={() => {
-                const nextCompleted = new Set(completedHabits);
-                if (isDone) {
-                  nextCompleted.delete(habit.id);
-                } else {
-                  nextCompleted.add(habit.id);
-                }
-                setCompletedHabits(nextCompleted);
-                setHabitOrder((order) => sortHabitOrder(order, nextCompleted));
-              }}
             />
           </div>
         );
