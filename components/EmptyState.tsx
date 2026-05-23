@@ -9,10 +9,10 @@ interface EmptyStateProps {
 export function EmptyState({ title, description, action }: EmptyStateProps) {
   return (
     <div className="empty-state">
-      <p className="font-medium text-[var(--label-primary)]">{title}</p>
-      <p className="tahoe-footnote mt-1">{description}</p>
+      <p className="apple-body font-medium">{title}</p>
+      <p className="apple-footnote mt-1">{description}</p>
       {action ? (
-        <Link className="btn-glass-prominent mt-4 inline-flex" href={action.href}>
+        <Link className="btn-primary mt-4 inline-flex" href={action.href}>
           {action.label}
         </Link>
       ) : null}

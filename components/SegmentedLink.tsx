@@ -10,7 +10,7 @@ export function SegmentedLink({ href, label, active }: SegmentedLinkProps) {
   return (
     <Link
       aria-current={active ? "page" : undefined}
-      className={`segment-glass ${active ? "segment-glass-active" : ""}`}
+      className={`segment-item ${active ? "segment-item-active" : ""}`}
       href={href}
       scroll={false}
     >

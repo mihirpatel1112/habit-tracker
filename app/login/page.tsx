@@ -9,27 +9,27 @@ export default async function Login({
   const { error } = await searchParams;
 
   return (
-    <main className="login-shell page-enter">
+    <main className="login-shell">
       <div className="login-shell-top">
         <ThemeToggle fullWidth />
       </div>
 
-      <div className="liquid-glass-elevated login-card">
-        <p className="tahoe-caption font-semibold text-[var(--tint)]">Habits</p>
-        <h1 className="tahoe-large-title mt-1 text-[var(--label-primary)]">Sign In</h1>
-        <p className="tahoe-footnote mt-2">
+      <div className="surface-card-elevated login-card">
+        <p className="apple-caption font-semibold text-[var(--accent)]">Habits</p>
+        <h1 className="apple-heading-1 mt-1">Sign In</h1>
+        <p className="apple-footnote mt-2">
           Your habits are private. Sign in to track and review progress.
         </p>
 
         <form action={login} className="mt-7 space-y-4">
           <div>
-            <label className="tahoe-caption mb-1.5 block font-semibold text-[var(--label-primary)]" htmlFor="username">
+            <label className="apple-caption mb-1.5 block font-semibold text-[var(--text-primary)]" htmlFor="username">
               Username
             </label>
             <input
               autoComplete="username"
               autoFocus
-              className="field-glass"
+              className="field-input"
               id="username"
               name="username"
               type="text"
@@ -38,12 +38,12 @@ export default async function Login({
           </div>
 
           <div>
-            <label className="tahoe-caption mb-1.5 block font-semibold text-[var(--label-primary)]" htmlFor="password">
+            <label className="apple-caption mb-1.5 block font-semibold text-[var(--text-primary)]" htmlFor="password">
               Password
             </label>
             <input
               autoComplete="current-password"
-              className="field-glass"
+              className="field-input"
               id="password"
               name="password"
               type="password"
@@ -53,7 +53,7 @@ export default async function Login({
 
           {error === "invalid" ? (
             <p
-              className="rounded-[var(--radius-glass-sm)] px-3 py-2.5 text-sm font-medium"
+              className="rounded-[var(--radius-sm)] px-3 py-2.5 text-sm font-medium"
               role="alert"
               style={{
                 background: "var(--destructive-surface)",
@@ -64,7 +64,7 @@ export default async function Login({
             </p>
           ) : null}
 
-          <button className="btn-glass-prominent w-full" type="submit">
+          <button className="btn-primary w-full" type="submit">
             Sign In
           </button>
         </form>
