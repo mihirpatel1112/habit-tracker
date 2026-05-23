@@ -48,15 +48,22 @@ function applyTheme(resolved: "light" | "dark") {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(() => readStoredTheme());
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">(() =>
-    resolveTheme(readStoredTheme()),
-  );
+  // Must match SSR — localStorage is read after hydration in useEffect below.
+  const [theme, setThemeState] = useState<Theme>("system");
+  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("light");
 
   const setTheme = useCallback((value: Theme) => {
     setThemeState(value);
     localStorage.setItem(STORAGE_KEY, value);
     const resolved = resolveTheme(value);
+    setResolvedTheme(resolved);
+    applyTheme(resolved);
+  }, []);
+
+  useEffect(() => {
+    const stored = readStoredTheme();
+    const resolved = resolveTheme(stored);
+    setThemeState(stored);
     setResolvedTheme(resolved);
     applyTheme(resolved);
   }, []);

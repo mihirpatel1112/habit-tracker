@@ -62,12 +62,7 @@ export function TodayClient({ activeHabits, todayCompletions }: TodayClientProps
           <div className="list-row list-row-interactive" key={habit.id}>
             <div className="flex items-center gap-3 min-w-0">
               <span aria-hidden className={`h-2.5 w-2.5 shrink-0 rounded-full ${color}`} />
-              <div className="min-w-0">
-                <p className="font-medium text-[var(--label-primary)] truncate">{habit.title}</p>
-                <p className="tahoe-footnote">
-                  {isDone ? "Completed today" : "Not completed yet"}
-                </p>
-              </div>
+              <p className="font-medium text-[var(--label-primary)] truncate">{habit.title}</p>
             </div>
 
             <CompleteButton

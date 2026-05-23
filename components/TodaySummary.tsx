@@ -12,20 +12,14 @@ export function TodaySummary({ completed, total }: TodaySummaryProps) {
   return (
     <div className="today-summary">
       <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-sm font-semibold text-[var(--label-primary)]">
-            {allDone ? "All done for today" : `${completed} of ${total} complete`}
-          </p>
-          <p className="tahoe-footnote mt-0.5">
-            {total === 0
-              ? "Add a habit to start your streak"
-              : allDone
-                ? "Nice work — keep the momentum"
-                : "Tap the circle to check off a habit"}
-          </p>
-        </div>
-        <div aria-hidden className="progress-ring">
-          <svg className="h-14 w-14 -rotate-90" viewBox="0 0 56 56">
+        <p className="text-sm font-semibold text-[var(--label-primary)]">
+          {allDone ? "All done" : `${completed}/${total}`}
+          {total > 0 ? (
+            <span className="font-normal text-[var(--label-secondary)]"> · {percent}%</span>
+          ) : null}
+        </p>
+        <div aria-hidden className="progress-ring hidden sm:grid">
+          <svg className="h-12 w-12 -rotate-90" viewBox="0 0 56 56">
             <circle
               className="progress-ring-track"
               cx="28"
@@ -48,7 +42,7 @@ export function TodaySummary({ completed, total }: TodaySummaryProps) {
           <span className="progress-ring-label">{total === 0 ? "—" : `${percent}%`}</span>
         </div>
       </div>
-      <div aria-hidden className="progress-bar mt-3">
+      <div aria-hidden className="progress-bar mt-2 sm:mt-3">
         <div className="progress-bar-fill" style={{ width: `${percent}%` }} />
       </div>
     </div>

@@ -1,7 +1,5 @@
-import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { SignOutButton } from "@/components/SignOutButton";
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { MobileSettingsSheet } from "@/components/MobileSettingsSheet";
 import { formatTodayLong, formatTodayShort, getGreeting } from "@/lib/format";
 
 interface AppHeaderProps {
@@ -28,20 +26,8 @@ export function AppHeader({ title, subtitle, primaryAction }: AppHeaderProps) {
               </time>
             </div>
             <div className="app-hero-toolbar">
-              <ThemeToggle />
-              <SignOutButton />
+              <MobileSettingsSheet />
             </div>
-          </div>
-
-          <div className="app-hero-body">
-            <h1 className="app-hero-page-title">{title}</h1>
-            {subtitle ? <p className="app-hero-subtitle">{subtitle}</p> : null}
-            {primaryAction ? (
-              <Link className="app-hero-cta" href={primaryAction.href}>
-                <span>{primaryAction.label}</span>
-                <ChevronRight aria-hidden size={18} strokeWidth={2.25} />
-              </Link>
-            ) : null}
           </div>
         </div>
       </header>

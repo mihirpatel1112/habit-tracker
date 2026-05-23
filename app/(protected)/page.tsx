@@ -99,8 +99,6 @@ export default async function Home({
   );
   const graphQuery = graphView === "archived" ? "&view=archived" : "";
 
-  // No need to import here, already imported at the top
-
   return (
     <main className="app-shell page-enter">
       <AppHeader
@@ -109,10 +107,7 @@ export default async function Home({
         title="Today"
       />
 
-      <GroupedSection
-        badge={`${todayCompleted.size}/${activeHabits.length}`}
-        title="Today"
-      >
+      <GroupedSection hideHeaderOnMobile title="Today">
         <TodaySummary completed={todayCompleted.size} total={activeHabits.length} />
 
         {activeHabits.length === 0 ? (
@@ -131,30 +126,34 @@ export default async function Home({
         hint="Each square is one day · tap and hold for the date"
         title="Progress"
         controls={
-          <div className="space-y-2.5">
-            <GraphLegend />
-            <SegmentedScroll label="Habit view">
-              <SegmentedLink
-                active={graphView === "active"}
-                href={`/?year=${selectedYear}`}
-                label="Active"
-              />
-              <SegmentedLink
-                active={graphView === "archived"}
-                href={`/?year=${selectedYear}&view=archived`}
-                label="Archived"
-              />
-            </SegmentedScroll>
-            <SegmentedScroll label="Year">
-              {yearOptions.map((year) => (
+          <div className="flex flex-col gap-2 md:gap-2.5">
+            <div className="hidden md:block">
+              <GraphLegend />
+            </div>
+            <div className="flex flex-col gap-2">
+              <SegmentedScroll label="Habit view">
                 <SegmentedLink
-                  active={year === selectedYear}
-                  href={`/?year=${year}${graphQuery}`}
-                  key={year}
-                  label={String(year)}
+                  active={graphView === "active"}
+                  href={`/?year=${selectedYear}`}
+                  label="Active"
                 />
-              ))}
-            </SegmentedScroll>
+                <SegmentedLink
+                  active={graphView === "archived"}
+                  href={`/?year=${selectedYear}&view=archived`}
+                  label="Archived"
+                />
+              </SegmentedScroll>
+              <SegmentedScroll label="Year">
+                {yearOptions.map((year) => (
+                  <SegmentedLink
+                    active={year === selectedYear}
+                    href={`/?year=${year}${graphQuery}`}
+                    key={year}
+                    label={String(year)}
+                  />
+                ))}
+              </SegmentedScroll>
+            </div>
           </div>
         }
       >
@@ -178,17 +177,16 @@ export default async function Home({
             const rate = formatPercent(completedDays.size, trackableDays);
 
             return (
-              <article className="p-4 border-[var(--glass-border-subtle)] border-t first:border-t-0 graph-article" key={habit.id}>
+              <article className="p-3 sm:p-4 border-[var(--glass-border-subtle)] border-t first:border-t-0 graph-article" key={habit.id}>
                 <div className="graph-habit-header">
-                  <div className="min-w-0">
-                    <h3 className="font-medium text-[var(--label-primary)] truncate">{habit.title}</h3>
-                    <p className="tahoe-footnote">
-                      {completedDays.size} of {trackableDays} days · {rate}% in {selectedYear}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 graph-habit-stats shrink-0">
-                    <span className="habit-stat-pill">{rate}%</span>
-                    <span aria-hidden className={`h-3 w-3 rounded-full ${color}`} />
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span aria-hidden className={`h-2.5 w-2.5 shrink-0 rounded-full ${color}`} />
+                    <div className="min-w-0">
+                      <h3 className="font-medium text-[var(--label-primary)] truncate">{habit.title}</h3>
+                      <p className="tahoe-footnote">
+                        {rate}% · {completedDays.size}/{trackableDays} days
+                      </p>
+                    </div>
                   </div>
                 </div>
 
