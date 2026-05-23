@@ -72,7 +72,7 @@ export function MobileSettingsSheet() {
 
         <form action={logout} className="mobile-settings-sign-out">
           <button
-            className="btn-destructive-glass flex w-full items-center justify-center gap-2"
+            className="btn-destructive flex w-full items-center justify-center gap-2"
             type="submit"
           >
             <LogOut aria-hidden size={16} strokeWidth={2} />

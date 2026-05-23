@@ -13,7 +13,7 @@ export default async function HabitsPage() {
   ]);
 
   return (
-    <main className="app-shell page-enter">
+    <main className="app-shell">
       <AppHeader
         primaryAction={{ href: "/", label: "Today" }}
         subtitle="Add habits you care about. Archive when done — history stays on your graphs."
@@ -34,8 +34,8 @@ export default async function HabitsPage() {
           habits.map((habit) => (
             <div className="list-row list-row-interactive flex-col items-stretch gap-3 sm:flex-row sm:items-center" key={habit.id}>
               <div className="min-w-0">
-                <p className="truncate font-medium text-[var(--label-primary)]">{habit.title}</p>
-                <p className="tahoe-footnote">Archive to hide from Today while keeping history.</p>
+                <p className="truncate font-medium text-[var(--text-primary)]">{habit.title}</p>
+                <p className="apple-footnote">Archive to hide from Today while keeping history.</p>
               </div>
 
               <ConfirmForm
@@ -43,7 +43,7 @@ export default async function HabitsPage() {
                 message={`Archive "${habit.title}"? You can still see it in Progress → Archived.`}
               >
                 <input name="id" type="hidden" value={habit.id} />
-                <button className="btn-glass w-full sm:w-auto" type="submit">
+                <button className="btn-secondary w-full sm:w-auto" type="submit">
                   Archive
                 </button>
               </ConfirmForm>
@@ -66,8 +66,8 @@ export default async function HabitsPage() {
           archivedHabits.map((habit) => (
             <div className="list-row list-row-interactive flex-col items-stretch gap-3 sm:flex-row sm:items-center" key={habit.id}>
               <div className="min-w-0">
-                <p className="truncate font-medium text-[var(--label-primary)]">{habit.title}</p>
-                <p className="tahoe-footnote">
+                <p className="truncate font-medium text-[var(--text-primary)]">{habit.title}</p>
+                <p className="apple-footnote">
                   Archived{" "}
                   {habit.archived_at
                     ? new Date(habit.archived_at).toLocaleDateString(undefined, {
@@ -84,7 +84,7 @@ export default async function HabitsPage() {
                 message={`Permanently delete "${habit.title}" and all its history? This cannot be undone.`}
               >
                 <input name="id" type="hidden" value={habit.id} />
-                <button className="btn-destructive-glass w-full sm:w-auto" type="submit">
+                <button className="btn-destructive w-full sm:w-auto" type="submit">
                   Delete
                 </button>
               </ConfirmForm>

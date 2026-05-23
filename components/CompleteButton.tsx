@@ -35,8 +35,8 @@ function CompleteButtonControl({
             ? `Undo ${habitTitle}`
             : `Complete ${habitTitle}`
       }
-      className={`complete-button grid shrink-0 place-items-center rounded-full text-lg font-semibold transition enabled:active:scale-95 disabled:opacity-70 ${
-        isDone ? `complete-filled ${colorClass} text-white` : "complete-ring text-[var(--label-tertiary)]"
+      className={`complete-button grid shrink-0 place-items-center rounded-full text-lg font-semibold transition-opacity duration-200 ease-out disabled:cursor-not-allowed disabled:opacity-50 ${
+        isDone ? `complete-filled ${colorClass} text-white` : "complete-ring text-[var(--text-tertiary)]"
       }`}
       disabled={pending}
       type="submit"

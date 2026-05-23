@@ -8,7 +8,7 @@ export function SegmentedScroll({ children, label }: SegmentedScrollProps) {
     <div className="segment-scroll-wrap">
       <p className="sr-only">{label}</p>
       <div aria-label={label} className="segment-scroll" role="group">
-        <div className="segmented-glass segment-scroll-track">{children}</div>
+        <div className="segmented-control segment-scroll-track">{children}</div>
       </div>
     </div>
   );

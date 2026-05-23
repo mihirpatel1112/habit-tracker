@@ -12,10 +12,10 @@ export function TodaySummary({ completed, total }: TodaySummaryProps) {
   return (
     <div className="today-summary">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-semibold text-[var(--label-primary)]">
+        <p className="apple-body text-sm font-semibold">
           {allDone ? "All done" : `${completed}/${total}`}
           {total > 0 ? (
-            <span className="font-normal text-[var(--label-secondary)]"> · {percent}%</span>
+            <span className="font-normal text-[var(--text-secondary)]"> · {percent}%</span>
           ) : null}
         </p>
         <div aria-hidden className="progress-ring hidden sm:grid">

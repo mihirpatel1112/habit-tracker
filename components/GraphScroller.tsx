@@ -52,7 +52,7 @@ export function GraphScroller({ children }: GraphScrollerProps) {
       >
         {children}
       </div>
-      <p className="graph-scroll-hint tahoe-caption mt-2">Swipe to see earlier months →</p>
+      <p className="graph-scroll-hint apple-caption mt-2">Swipe to see earlier months →</p>
     </div>
   );
 }

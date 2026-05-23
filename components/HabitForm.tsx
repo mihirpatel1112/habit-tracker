@@ -6,12 +6,12 @@ export function HabitForm({ action }: HabitFormProps) {
   return (
     <form action={action} className="list-row flex-col gap-3 sm:flex-row sm:items-end">
       <div className="w-full flex-1">
-        <label className="tahoe-caption mb-1.5 block font-semibold text-[var(--label-primary)]" htmlFor="title">
+        <label className="apple-caption mb-1.5 block font-semibold text-[var(--text-primary)]" htmlFor="title">
           New habit
         </label>
         <input
           autoComplete="off"
-          className="field-glass"
+          className="field-input"
           id="title"
           maxLength={80}
           name="title"
@@ -21,7 +21,7 @@ export function HabitForm({ action }: HabitFormProps) {
         />
       </div>
 
-      <button className="btn-glass-prominent w-full shrink-0 sm:w-auto" type="submit">
+      <button className="btn-primary w-full shrink-0 sm:w-auto" type="submit">
         Add Habit
       </button>
     </form>

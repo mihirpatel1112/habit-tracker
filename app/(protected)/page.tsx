@@ -100,7 +100,7 @@ export default async function Home({
   const graphQuery = graphView === "archived" ? "&view=archived" : "";
 
   return (
-    <main className="app-shell page-enter">
+    <main className="app-shell">
       <AppHeader
         primaryAction={{ href: "/habits", label: "Manage" }}
         subtitle="Mark today in one tap. Review your year when you are ready."
@@ -177,13 +177,13 @@ export default async function Home({
             const rate = formatPercent(completedDays.size, trackableDays);
 
             return (
-              <article className="p-3 sm:p-4 border-[var(--glass-border-subtle)] border-t first:border-t-0 graph-article" key={habit.id}>
+              <article className="graph-article border-t border-[var(--border-default)] p-3 first:border-t-0 sm:p-4" key={habit.id}>
                 <div className="graph-habit-header">
                   <div className="flex min-w-0 items-center gap-2">
-                    <span aria-hidden className={`h-2.5 w-2.5 shrink-0 rounded-full ${color}`} />
+                    <span aria-hidden className={`size-2.5 shrink-0 rounded-full ${color}`} />
                     <div className="min-w-0">
-                      <h3 className="font-medium text-[var(--label-primary)] truncate">{habit.title}</h3>
-                      <p className="tahoe-footnote">
+                      <h3 className="truncate font-medium text-[var(--text-primary)]">{habit.title}</h3>
+                      <p className="apple-footnote tabular-nums">
                         {rate}% · {completedDays.size}/{trackableDays} days
                       </p>
                     </div>
@@ -193,7 +193,7 @@ export default async function Home({
                 <GraphScroller>
                   {months.map((month) => (
                     <div className="shrink-0" key={month.key}>
-                      <p className="font-semibold tahoe-caption">{month.label}</p>
+                      <p className="apple-caption font-semibold">{month.label}</p>
                       <div className="gap-1.5 grid grid-rows-7 grid-flow-col mt-2">
                         {month.days.map((day, index) =>
                           day ? (

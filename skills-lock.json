@@ -6,6 +6,12 @@
       "sourceType": "github",
       "skillPath": "skills/apple/SKILL.md",
       "computedHash": "cd8ebe89688d7fb36c838618d1a1847d645a721b231d2a82c746d4d22003b77c"
+    },
+    "color-expert": {
+      "source": "meodai/skill.color-expert",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "df2c0e9577d45f31e37f1dbb63943c1e8b53a84a26ebe3286008cf87a5268e76"
     }
   }
 }
