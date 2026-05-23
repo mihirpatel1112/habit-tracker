@@ -7,7 +7,7 @@ function Spinner() {
   return (
     <span
       aria-hidden
-      className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent opacity-80"
+      className="opacity-80 border-2 border-current border-t-transparent rounded-full w-4 h-4 animate-spin"
     />
   );
 }
@@ -16,10 +16,12 @@ function CompleteButtonControl({
   isDone,
   colorClass,
   habitTitle,
+  onClick,
 }: {
   isDone: boolean;
   colorClass: string;
   habitTitle: string;
+  onClick?: () => void;
 }) {
   const { pending } = useFormStatus();
 
@@ -38,6 +40,7 @@ function CompleteButtonControl({
       }`}
       disabled={pending}
       type="submit"
+      onClick={onClick}
     >
       {pending ? <Spinner /> : isDone ? "✓" : null}
     </button>
@@ -49,14 +52,20 @@ interface CompleteButtonProps {
   isDone: boolean;
   habitTitle: string;
   colorClass: string;
+  onToggle?: () => void;
 }
 
-export function CompleteButton({ habitId, isDone, habitTitle, colorClass }: CompleteButtonProps) {
+export function CompleteButton({ habitId, isDone, habitTitle, colorClass, onToggle }: CompleteButtonProps) {
   return (
     <form action={toggleToday} className="shrink-0">
       <input name="id" type="hidden" value={habitId} />
       <input name="isDone" type="hidden" value={String(isDone)} />
-      <CompleteButtonControl colorClass={colorClass} habitTitle={habitTitle} isDone={isDone} />
+      <CompleteButtonControl 
+        colorClass={colorClass} 
+        habitTitle={habitTitle} 
+        isDone={isDone} 
+        onClick={onToggle}
+      />
     </form>
   );
 }

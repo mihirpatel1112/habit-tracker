@@ -1,5 +1,4 @@
 import { AppHeader } from "@/components/AppHeader";
-import { CompleteButton } from "@/components/CompleteButton";
 import { EmptyState } from "@/components/EmptyState";
 import { GraphLegend } from "@/components/GraphLegend";
 import { GraphScroller } from "@/components/GraphScroller";
@@ -15,6 +14,7 @@ import {
 } from "@/lib/db";
 import { formatPercent } from "@/lib/format";
 import { getHabitColor } from "@/lib/habit-colors";
+import { TodayClient } from "./TodayClient";
 
 function toDateKey(date: Date) {
   const year = date.getFullYear();
@@ -99,6 +99,8 @@ export default async function Home({
   );
   const graphQuery = graphView === "archived" ? "&view=archived" : "";
 
+  // No need to import here, already imported at the top
+
   return (
     <main className="app-shell page-enter">
       <AppHeader
@@ -120,33 +122,9 @@ export default async function Home({
             title="Nothing to track yet"
           />
         ) : (
-          activeHabits.map((habit) => {
-            const isDone = todayCompleted.has(habit.id);
-            const color = getHabitColor(habit.id);
-
-            return (
-              <div className="list-row list-row-interactive" key={habit.id}>
-                <div className="flex min-w-0 items-center gap-3">
-                  <span aria-hidden className={`h-2.5 w-2.5 shrink-0 rounded-full ${color}`} />
-                  <div className="min-w-0">
-                    <p className="truncate font-medium text-[var(--label-primary)]">{habit.title}</p>
-                    <p className="tahoe-footnote">
-                      {isDone ? "Completed today" : "Not completed yet"}
-                    </p>
-                  </div>
-                </div>
-
-                <CompleteButton
-                  colorClass={color}
-                  habitId={habit.id}
-                  habitTitle={habit.title}
-                  isDone={isDone}
-                />
-              </div>
-            );
-          })
+          <TodayClient activeHabits={activeHabits} todayCompletions={todayCompletions} />
         )}
-      </GroupedSection>
+       </GroupedSection>
 
       <GroupedSection
         badge={String(selectedYear)}
@@ -200,15 +178,15 @@ export default async function Home({
             const rate = formatPercent(completedDays.size, trackableDays);
 
             return (
-              <article className="graph-article border-t border-[var(--glass-border-subtle)] p-4 first:border-t-0" key={habit.id}>
+              <article className="p-4 border-[var(--glass-border-subtle)] border-t first:border-t-0 graph-article" key={habit.id}>
                 <div className="graph-habit-header">
                   <div className="min-w-0">
-                    <h3 className="truncate font-medium text-[var(--label-primary)]">{habit.title}</h3>
+                    <h3 className="font-medium text-[var(--label-primary)] truncate">{habit.title}</h3>
                     <p className="tahoe-footnote">
                       {completedDays.size} of {trackableDays} days · {rate}% in {selectedYear}
                     </p>
                   </div>
-                  <div className="graph-habit-stats flex shrink-0 items-center gap-2">
+                  <div className="flex items-center gap-2 graph-habit-stats shrink-0">
                     <span className="habit-stat-pill">{rate}%</span>
                     <span aria-hidden className={`h-3 w-3 rounded-full ${color}`} />
                   </div>
@@ -217,8 +195,8 @@ export default async function Home({
                 <GraphScroller>
                   {months.map((month) => (
                     <div className="shrink-0" key={month.key}>
-                      <p className="tahoe-caption font-semibold">{month.label}</p>
-                      <div className="mt-2 grid grid-flow-col grid-rows-7 gap-1.5">
+                      <p className="font-semibold tahoe-caption">{month.label}</p>
+                      <div className="gap-1.5 grid grid-rows-7 grid-flow-col mt-2">
                         {month.days.map((day, index) =>
                           day ? (
                             <div
