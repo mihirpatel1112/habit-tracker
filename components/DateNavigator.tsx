@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { addDays, daysBeforeToday } from "@/lib/dates";
+import { addDays, dateKeyToLocalDate, daysBeforeToday, formatLongDateKey } from "@/lib/dates";
 
 interface DateNavigatorProps {
   selectedDate: string;
@@ -35,16 +35,10 @@ function ChevronRightIcon() {
 }
 
 function formatDateParts(dateKey: string) {
-  const [year, month, day] = dateKey.split("-").map(Number);
-  const date = new Date(year, month - 1, day);
+  const date = dateKeyToLocalDate(dateKey);
 
   return {
-    long: date.toLocaleDateString("en", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-    }),
+    long: formatLongDateKey(dateKey),
     short: date.toLocaleDateString("en", {
       weekday: "short",
       month: "short",

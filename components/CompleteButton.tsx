@@ -2,6 +2,7 @@
 
 import { useFormStatus } from "react-dom";
 import { toggleToday } from "@/app/actions";
+import { formatLongDateKey } from "@/lib/dates";
 
 function Spinner() {
   return (
@@ -81,11 +82,12 @@ function GraphDayButtonControl({
   completedOn: string;
 }) {
   const { pending } = useFormStatus();
+  const longDate = formatLongDateKey(completedOn);
 
   return (
     <button
       aria-busy={pending}
-      aria-label={`${habitTitle} on ${completedOn}: ${
+      aria-label={`${habitTitle} on ${longDate}: ${
         isDone ? "done, tap to undo" : "not done, tap to mark"
       }`}
       className={`graph-cell graph-cell-size border cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 ${
@@ -94,7 +96,7 @@ function GraphDayButtonControl({
           : "border-[var(--graph-empty-border)] bg-[var(--graph-empty)]"
       }`}
       disabled={pending}
-      title={`${completedOn}: ${isDone ? "Done" : "Missed"}`}
+      title={longDate}
       type="submit"
     />
   );

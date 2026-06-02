@@ -33,3 +33,17 @@ export function daysBeforeToday(dateKey: string, calendarToday: string) {
 
   return Math.round((today.getTime() - date.getTime()) / 86_400_000);
 }
+
+export function dateKeyToLocalDate(dateKey: string) {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  return new Date(year, month - 1, day);
+}
+
+export function formatLongDateKey(dateKey: string) {
+  return dateKeyToLocalDate(dateKey).toLocaleDateString("en", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
